@@ -1,0 +1,83 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-sm-4">
+            
+            {% if person != None %}
+                <div class="row">
+                    <h1>Edit Record</h1>
+                </div>
+                <div class="row">
+                    <div>
+                        <fieldset>
+                            <legend>Updating id: {{person.id}}</legend>
+                            <form method="POST" action="{{host}}/persons/update/{{person.id}}">
+                              <div class="form-group">
+                                <label for="nameText" class="bmd-label-floating">Name</label>
+                                <input type="text" name="name" class="form-control" value="{{person.name}}" id="nameText">
+                                <span class="bmd-help">User Name</span>
+                              </div>
+                              <div class="form-group">
+                                <label for="countryText" class="bmd-label-floating">Country</label>
+                                <input type="text" name="country" maxlength="3" value="{{person.country}}" class="form-control" id="countryText">
+                                <span class="bmd-help">Max 3 Characters</span>
+                              </div>
+                              <button type="submit" class="btn btn-primary btn-raised">Update</button>
+                              <a href="/" role="button" class="btn btn-primary btn-raised">Cancel</a>
+                            </form>
+                        </fieldset>
+                    </div>
+                </div>
+            {% else %}
+                <div class="row">
+                    <div>
+                        <h1>Add Record</h1>
+                    </div>
+                </div>
+                <div class="row">
+                    <fieldset>
+                        <legend>Enter new record here</legend>
+                        <form method="POST" action="{{host}}/persons">
+                          <div class="form-group">
+                            <label for="nameText" class="bmd-label-floating">Name</label>
+                            <input type="text" name="name" class="form-control" id="nameText">
+                            <span class="bmd-help">User Name</span>
+                          </div>
+                          <div class="form-group">
+                            <label for="countryText" class="bmd-label-floating">Country</label>
+                            <input type="text" name="country" maxlength="3" class="form-control" id="countryText">
+                            <span class="bmd-help">Max 3 Characters</span>
+                          </div>
+                          <button type="submit" class="btn btn-primary btn-raised">Submit</button>
+                        </form>
+                    </fieldset>
+                </div>
+            {% endif %}
+
+        </div>
+        <div class="col-sm-8">
+            <table class="table table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Name</th><th>Country</th><th>Date Created</th><th>Controls</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in records %}
+                    <tr>
+                        <td>{{user.name}}</td>
+                        <td>{{user.country}}</td>
+                        <td>{{user.date_created}}</td>
+                        <td>
+                            <a href="{{host}}/persons/delete/{{user.id}}">DELETE</a>
+                            <a href="{{host}}/update/{{user.id}}">UPDATE</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
