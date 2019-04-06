@@ -1,21 +1,23 @@
-from workspace import database
 from flask import Flask, request, render_template, send_from_directory, jsonify, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 import json
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///lab6.db'
+db = SQLAlchemy(app)
 
 host = "https://extra-snickdx.c9users.io:8080"
 
-# When the Flask app is shutting down, close the database session
-@app.teardown_appcontext
-def shutdown_session(exception=None):
-    database.db_session.remove()
+# enable CORS on all the routes that start with /api
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-database.init_db()
-from workspace.models import Person
+from .models.models import Person
 
 
+#db.create_all()
 
 def createPerson(new_person):
     if 'name' in new_person:
@@ -25,8 +27,8 @@ def createPerson(new_person):
     if 'country' in new_person:
         p.country = new_person["country"]
     try:
-        database.db_session.add(p)
-        database.db_session.commit()
+        db.session.add(p)
+        db.session.commit()
     except error:
         return {"message":"Database error "+error, "code":500}
     finally:
@@ -41,7 +43,7 @@ def updatePerson(new_person, id):
             return {"message":"Invalid fields given", "code":400}
         if 'country' in new_person:
             p.country = new_person["country"]
-        database.db_session.commit()
+        db.session.commit()
     except error:
         return {"message":"Error "+error, "code":500}
     finally:
@@ -50,8 +52,8 @@ def updatePerson(new_person, id):
 def deletePerson(id):
     try:
         p = Person.query.get(id)
-        database.db_session.delete(p)
-        database.db_session.commit()
+        db.session.delete(p)
+        db.session.commit()
     except error:
         return {"message":"Database error"+error, "code":500}
     finally:
@@ -98,7 +100,7 @@ def save_person():
              return index()
         else:
             return render_template('error.html', result=result)
-    render_template('error.html', result={"message":"Invliad data format", code:500})
+    render_template('error.html', result={"message":"Invliad data format", "code":500})
 
 @app.route('/persons/update/<id>', methods=['POST'])
 def udpate_person(id):
@@ -118,3 +120,8 @@ def remove_person(id):
 
     
 # ******************************* APP2 Routes **********************************
+
+
+if __name__ == "__main__":
+    print("Running From the Command line")
+    app.run(host='0.0.0.0', debug=True, use_reloader=True)

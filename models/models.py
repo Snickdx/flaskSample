@@ -1,8 +1,8 @@
 from sqlalchemy import Integer, Column, String, DateTime
-from workspace.database import Base
 from sqlalchemy.sql import func
+from ..app import db
 
-class Person(Base):
+class Person(db.Model):
     __tablename__ = 'persons'
     id = Column(Integer, primary_key=True, autoincrement="auto")
     name = Column(String(50), unique=True)
