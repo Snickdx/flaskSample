@@ -86,12 +86,12 @@
                             
                           <div class="form-group">
                             <label for="nameText" class="bmd-label-floating">Name</label>
-                            <input type="text" name="name" class="form-control" value="Kylie" id="nameText">
+                            <input type="text" name="name" class="form-control" value="" id="nameText">
                             <span class="bmd-help">User Name</span>
                           </div>
                           <div class="form-group">
                             <label for="countryText" class="bmd-label-floating">Country</label>
-                            <input type="text" name="country" maxlength="3" value="TnT" class="form-control" id="countryText">
+                            <input type="text" name="country" maxlength="3" value="" class="form-control" id="countryText">
                             <span class="bmd-help">Max 3 Characters</span>
                           </div>
                           <input type="button" value="Update" onclick="updateRecord()" class="btn btn-primary btn-raised">
@@ -124,7 +124,8 @@
    
 
         <script>
-            let host = "https://extra-snickdx.c9users.io:8080";
+            // let host = "https://extra-snickdx.c9users.io:8080";
+            let host = "https://snick-sample.herokuapp.com";
             
             function ajaxPost(url, data, callback){
                 let xhr = new XMLHttpRequest();

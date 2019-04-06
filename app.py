@@ -14,7 +14,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///lab6.db'
 db = SQLAlchemy(app)
 
-host = "https://extra-snickdx.c9users.io:8080"
+# host = "https://extra-snickdx.c9users.io:8080"
+host = "https://snick-sample.herokuapp.com"
 
 # enable CORS on all the routes that start with /api
 CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -133,7 +134,7 @@ def save_person():
     if request.content_type  == 'application/x-www-form-urlencoded':
         result = createPerson(request.form)
         if result['code'] == 201:
-             return index()
+             return app1()
         else:
             return render_template('error.html', result=result)
     render_template('error.html', result={"message":"Invliad data format", "code":500})
@@ -142,7 +143,7 @@ def save_person():
 def udpate_person(id):
     result = updatePerson(request.form, id)
     if result['code'] == 202:
-        return index()
+        return app1()
     else:
         return render_template('error.html', result=result)
 
@@ -150,7 +151,7 @@ def udpate_person(id):
 def remove_person(id):
     result = deletePerson(id)
     if result['code'] == 204:
-        return index()
+        return app1()
     else:
         return render_template('error.html', result=result)
 
