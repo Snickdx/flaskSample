@@ -93,9 +93,9 @@ def deletePerson(id):
 # Templating routes return render_template() done in Lab 7
 
 # Allows static files to be requested eg js,css, images
-@app.route('/static/<path>')
-def static(path):
-    return send_from_directory('templates', path)
+# @app.route('/static/<path>')
+# def static(path):
+#     return send_from_directory('templates', path)
 
 # Serves specific files through flask
 @app.route('/app1.png')
@@ -104,7 +104,7 @@ def app1_png():
     
 @app.route('/app2.png')
 def app2_png():
-    return send_from_directory('templates', 'app1.png')
+    return send_from_directory('templates', 'app2.png')
 
 # get all persons and pass it to a template to render
 @app.route('/app1')
