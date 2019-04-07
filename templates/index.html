@@ -7,7 +7,7 @@
 
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
         <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
-        <title>Sample App</title>
+        <title>Example Application</title>
         <style>
             /* Show it is fixed to the top */
             body {
@@ -37,8 +37,45 @@
 
 
         <div class="container">
-            <a href="/app1" role="button" class="btn btn-primary btn-raised">App1 (No JS)</a>
-            <a href="/app2" role="button" class="btn btn-primary btn-raised">App2 (SPA)</a>
+            <div class="row" style="height:50vh">
+                <div class="col">
+                    <div class="card">
+                      <img class="card-img-top" height="300" width="330" src="app1.png" alt="Card image cap">
+                      <div class="card-body">
+                        <h5 class="card-title">Appllication 1</h5>
+                            STACK:
+                            <ul>
+                                <li>Database: SQLite</li>
+                                <li>Webserver: Python Flask</li>
+                                <li>ORM: SQLAlchemy</li>
+                                <li>Frontend: Bootstrap, Views are rendered on server with Jinja2</li>
+                                <li>No Javascript used</li>
+                            </ul>
+                        <a href="/app1" role="button" class="btn btn-primary btn-raised">Visit</a>
+                      </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card">
+                      <img class="card-img-top" height="300" width="330" src="app2.png" alt="Card image cap">
+                      <div class="card-body">
+                        <h5 class="card-title">Application 2</h5>
+                           STACK:
+                            <ul>
+                                <li>Database: SQLite</li>
+                                <li>Webserver: Python Flask</li>
+                                <li>ORM: SQLAlchemy</li>
+                                <li>Frontend: Bootstrap, Standard Javascript (no framework)</li>
+                                <li>Single Page Application (no releoads)</li>
+                            </ul>
+                      
+                        <a href="/app1" role="button" class="btn btn-primary btn-raised">Visit</a>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            
+        
         </div>
 
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

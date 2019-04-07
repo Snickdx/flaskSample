@@ -92,9 +92,19 @@ def deletePerson(id):
 # The post routes are only compatible with form data not json
 # Templating routes return render_template() done in Lab 7
 
-@app.route('/js/<path>')
-def send_js(path):
-    return send_from_directory('templates/js', path)
+# Allows static files to be requested eg js,css, images
+@app.route('/static/<path>')
+def static(path):
+    return send_from_directory('templates', path)
+
+# Serves specific files through flask
+@app.route('/app1.png')
+def app1_png(path):
+    return send_from_directory('templates', 'app1.png')
+    
+@app.route('/static/app2.png')
+def app2_png(path):
+    return send_from_directory('templates', 'app1.png')
 
 # get all persons and pass it to a template to render
 @app.route('/app1')
