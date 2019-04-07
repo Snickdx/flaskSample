@@ -99,11 +99,11 @@ def static(path):
 
 # Serves specific files through flask
 @app.route('/app1.png')
-def app1_png(path):
+def app1_png():
     return send_from_directory('templates', 'app1.png')
     
-@app.route('/static/app2.png')
-def app2_png(path):
+@app.route('/app2.png')
+def app2_png():
     return send_from_directory('templates', 'app1.png')
 
 # get all persons and pass it to a template to render
@@ -149,7 +149,7 @@ def save_person():
     if request.content_type  == 'application/x-www-form-urlencoded': #would not work if json data is sent
         result = createPerson(request.form)
         if result['code'] == 201:#201 Created, set by createPerson on successful create
-             return app1()
+             return app1()# redirect to home
         else:
             return render_template('error.html', result=result)
     render_template('error.html', result={"message":"Invliad data format", "code":500})
@@ -158,7 +158,7 @@ def save_person():
 def udpate_person(id):
     result = updatePerson(request.form, id)
     if result['code'] == 202:#202 Accepted, set by updatePerson on successful update
-        return app1()
+        return app1()# redirect to home
     else:
         return render_template('error.html', result=result)
 
@@ -166,7 +166,7 @@ def udpate_person(id):
 def remove_person(id):
     result = deletePerson(id)
     if result['code'] == 204:#204 No content, set by deletePerson if deletion was successful
-        return app1()
+        return app1()# redirect to home
     else:
         return render_template('error.html', result=result)
 
