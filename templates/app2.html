@@ -125,38 +125,44 @@
    
 
         <script>
+            //use localhost if flask app running on local machine
             // let host = "https://extra-snickdx.c9users.io:8080";
             let host = "https://snick-sample.herokuapp.com";
+            // let host = "localhost:5000"
+            
+            //The following functions Perfoms xml http requests
+            //Functions for posting data, putting data, getting data and deleting data
+            //The callback parameters are functions which handle the response of the request refer to callbackhell slack channel
             
             function ajaxPost(url, data, callback){
                 let xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
                   if (this.readyState == 4 && this.status == 200) {
-                    callback(JSON.parse(this.responseText));
+                    callback(JSON.parse(this.responseText));//IMPORTANT json string must be convertd to js object
                   }
                 };
                 xhr.open("POST", url);
                 xhr.setRequestHeader("Content-type", "application/json");
-                xhr.send(JSON.stringify(data));
+                xhr.send(JSON.stringify(data));//IMPORTANT json data must be stringified
             }
             
             function ajaxPut(url, data, callback){
                 let xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
                   if (this.readyState == 4 && this.status == 200) {
-                    callback(JSON.parse(this.responseText));
+                    callback(JSON.parse(this.responseText));//IMPORTANT json string must be convertd to js object
                   }
                 };
                 xhr.open("PUT", url);
                 xhr.setRequestHeader("Content-type", "application/json");
-                xhr.send(JSON.stringify(data));
+                xhr.send(JSON.stringify(data));//IMPORTANT json data must be stringified
             }
             
             function ajaxGet(url, callback){
                 let xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
                   if (this.readyState == 4 && this.status == 200) {
-                    callback(JSON.parse(this.responseText));
+                    callback(JSON.parse(this.responseText));//any function passed will be called with the requestd data passed to it
                   }
                 };
                 xhr.open("GET", url);
@@ -175,7 +181,7 @@
             }
             
             function deleteRecord(id){
-                ajaxDelete(`${host}/api/persons/${id}`, loadRecords);
+                ajaxDelete(`${host}/api/persons/${id}`, loadRecords);//delete and reload data
             }
             
             function clearForm(id){
@@ -184,6 +190,7 @@
                     form.elements[key]="";
             }
             
+            //pulls data from form and performs ajax put request sending data as json
             function updateRecord(){
                 
                 let form = document.querySelector("#updateForm");
@@ -193,9 +200,10 @@
             		country: form.elements['country'].value
             	};
             	clearForm("updateForm");
-                ajaxPut(`${host}/api/persons/${record.id}`, record, loadRecords);
+                ajaxPut(`${host}/api/persons/${record.id}`, record, loadRecords);//send data and redo templating to reflect changes
             }
             
+            //pulls data from form and performs ajax post request sending data as json
             function createRecord(){
                 let form = document.querySelector("#createForm");
             	let record = {
@@ -203,9 +211,11 @@
             		country: form.elements['country'].value
             	};
             	clearForm("createForm");
-                ajaxPost(`${host}/api/persons`, record, loadRecords);
+                ajaxPost(`${host}/api/persons`, record, loadRecords);//send data and redo templating to reflect changes
             }
             
+            //function does all templating after data is retrieved form database
+            //introduced in lab4
             function recordsHandler(records){
                 let tableHTML = "";
                 let selectHTML = "";
@@ -222,6 +232,7 @@
                                 </tr>`;
                     selectHTML+=`<option>${rec.id}</option>`;
                 }
+                //JS templating
                 document.querySelector("#recSelect").innerHTML = selectHTML;
                 document.querySelector("#list").innerHTML = tableHTML;
             }
@@ -234,7 +245,7 @@
             
             window.addEventListener('load', function() {
                 console.log('All assets are loaded');
-                loadRecords();
+                loadRecords();//load our records
             
             })
             

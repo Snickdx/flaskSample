@@ -14,24 +14,28 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///lab6.db'
 db = SQLAlchemy(app)
 
+# use localhost for your local machine
 # host = "https://extra-snickdx.c9users.io:8080"
+# host = "localhost" 
 host = "https://snick-sample.herokuapp.com"
 
 # enable CORS on all the routes that start with /api
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 ##********************************* Models *************************************
+
+# Standard model setup. refer to sqlachemy docs
 class Person(db.Model):
     __tablename__ = 'persons'
     id = Column(Integer, primary_key=True, autoincrement="auto")
     name = Column(String(50), unique=True)
     date_created = Column(DateTime(), server_default=func.now())
     country = Column(String(3), default='TnT')
-
-    def __init__(self, name, country = None):
+    
+    #constructor for class good idea to make one
+    def __init__(self, name = None, country = None):
         self.name = name
-        if country:
-            self.country = country
+        self.country = country
         
 
     def toDict(self):
@@ -44,33 +48,30 @@ class Person(db.Model):
 
 #db.create_all()
 
-##*********************************** Functions ********************************
+#********************************Data Functions ********************************
+# These functions perform operations on the database and are used by the routes
+# They all use python try catch to prevent the server from crashing on error
+# Lab 6 has similiar functionality in routes
+# All functions return a dictionary which is jsonified when they are called in the routes
+# It is not necessary to separate these functions from the routes. However, they were separated so
+# that they can be reused in different routes
 
 def createPerson(new_person):
-    if 'name' in new_person:
-        p = Person(new_person['name'])
-    else:
-        return {"message":"Invalid fields given", "code":400}
-    if 'country' in new_person:
-        p.country = new_person["country"]
     try:
+        p = Person(new_person['name'], new_person["country"])#create person object using contructor
         db.session.add(p)
-        db.session.commit()
+        db.session.commit()# save object
     except error:
         return {"message":"Error "+error, "code":500}
     finally:
         return {"message":p.toDict(), "code":201}
         
 def updatePerson(new_person, id):
-    p = Person.query.get(id)
     try:
-        if 'name' in new_person:
-            p.name = new_person['name']
-        else:
-            return {"message":"Invalid fields given", "code":400}
-        if 'country' in new_person:
-            p.country = new_person["country"]
-        db.session.commit()
+        p = Person.query.get(id)
+        p.name = new_person['name']# over write object property
+        p.country = new_person["country"]# save object
+        db.session.commit()#save object
     except error:
         return {"message":"Error "+error, "code":500}
     finally:
@@ -79,8 +80,8 @@ def updatePerson(new_person, id):
 def deletePerson(id):
     try:
         p = Person.query.get(id)
-        db.session.delete(p)
-        db.session.commit()
+        db.session.delete(p)#delete object from database
+        db.session.commit()#save changes
     except error:
         return {"message":"Database error"+error, "code":500}
     finally:
@@ -88,19 +89,22 @@ def deletePerson(id):
 
 # *********************************APP1 ROUTES**********************************
 # View Routes & Data Routes 
-
+# The post routes are only compatible with form data not json
+# Templating routes return render_template() done in Lab 7
 
 @app.route('/js/<path>')
 def send_js(path):
     return send_from_directory('templates/js', path)
-    
+
+# get all persons and pass it to a template to render
 @app.route('/app1')
 def app1():
     records = Person.query.all()
     records = list(map(lambda object: object.toDict(), records))
     response = jsonify(records)
     return render_template("app1.html", person=None, records=records, host=host)
-    
+
+# full js version of app no templating done on server
 @app.route('/app2')
 def app2():
     return send_from_directory('templates', "app2.html")
@@ -108,7 +112,8 @@ def app2():
 @app.route("/")
 def index():
     return render_template("index.html")
-    
+
+#passes which record to be updated into the template
 @app.route("/update/<id>")
 def update(id):
     p = Person.query.get(id)
@@ -120,8 +125,8 @@ def update(id):
 @app.route('/persons', methods=['GET'])
 def show_all_persons():
     records = Person.query.all()
-    records = list(map(lambda object: object.toDict(), records))
-    response = jsonify(records)
+    records = list(map(lambda object: object.toDict(), records))#must convert objects to dictionaries
+    response = jsonify(records)#jsonify all responses which aren't templates
     response.status_code = 200
     return response
 
@@ -131,9 +136,9 @@ def show_person(id):
 
 @app.route('/persons', methods=['POST'])
 def save_person():
-    if request.content_type  == 'application/x-www-form-urlencoded':
+    if request.content_type  == 'application/x-www-form-urlencoded': #would not work if json data is sent
         result = createPerson(request.form)
-        if result['code'] == 201:
+        if result['code'] == 201:#201 Created, set by createPerson on successful create
              return app1()
         else:
             return render_template('error.html', result=result)
@@ -142,7 +147,7 @@ def save_person():
 @app.route('/persons/update/<id>', methods=['POST'])
 def udpate_person(id):
     result = updatePerson(request.form, id)
-    if result['code'] == 202:
+    if result['code'] == 202:#202 Accepted, set by updatePerson on successful update
         return app1()
     else:
         return render_template('error.html', result=result)
@@ -150,7 +155,7 @@ def udpate_person(id):
 @app.route('/persons/delete/<id>', methods=['GET'])
 def remove_person(id):
     result = deletePerson(id)
-    if result['code'] == 204:
+    if result['code'] == 204:#204 No content, set by deletePerson if deletion was successful
         return app1()
     else:
         return render_template('error.html', result=result)
@@ -158,6 +163,7 @@ def remove_person(id):
     
 # ******************************* APP2 Routes **********************************
 ## Data only Routes, no rendering done
+## The data can be received in the routes as either json or form data
 
 
 @app.route('/api/persons/<id>', methods=['GET'])
@@ -180,7 +186,7 @@ def api_create_person():
         data = request.form
     elif request.content_type == 'application/json':
         data = request.json
-    return jsonify(createPerson(data))
+    return jsonify(createPerson(data))# call createPerson on data an jsonify its response
 
 @app.route('/api/persons/<id>', methods=['PUT'])
 def api_update_person(id):
