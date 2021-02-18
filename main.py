@@ -107,7 +107,7 @@ def app2_png():
     return send_from_directory('templates', 'app2.png')
 
 @app.route('/config.js')
-def app1_png():
+def configjs():
     return send_from_directory('templates', 'config.js')
 
 # get all persons and pass it to a template to render
