@@ -2,7 +2,7 @@ from flask import Flask, request, render_template, send_from_directory, jsonify,
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import json
-
+import os
 
 from sqlalchemy import Integer, Column, String, DateTime
 from sqlalchemy.sql import func
@@ -12,12 +12,12 @@ app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///lab6.db'
+app.config['SEVER_NAME'] = os.environ.get("SERVER_NAME", default="127.0.0.1")
 db = SQLAlchemy(app)
 
 # use localhost for your local machine
-# host = "https://extra-snickdx.c9users.io:8080"
 # host = "localhost" 
-host = "https://snick-sample.herokuapp.com"
+host = app.config['SEVER_NAME']
 
 # enable CORS on all the routes that start with /api
 CORS(app, resources={r"/api/*": {"origins": "*"}})
