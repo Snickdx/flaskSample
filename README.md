@@ -14,6 +14,6 @@ Flask app for educational purposes. Two implementations; Non-JS flask app and JS
 
 ## Demo
 
-[DemoLink](https://snick-sample.herokuapp.com)
+[DemoLink](https://snick-flask-sample.herokuapp.com/)
 
 
