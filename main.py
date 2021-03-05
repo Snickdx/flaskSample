@@ -158,8 +158,9 @@ def save_person():
             return render_template('error.html', result=result)
     render_template('error.html', result={"message":"Invliad data format", "code":500})
 
-@app.route('/persons/update/<id>', methods=['POST'])
-def udpate_person(id):
+@app.route('/persons/update', methods=['POST'])
+def udpate_person():
+    id = request.form['id']
     result = updatePerson(request.form, id)
     if result['code'] == 202:#202 Accepted, set by updatePerson on successful update
         return app1()# redirect to home

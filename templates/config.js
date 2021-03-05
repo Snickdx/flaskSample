@@ -1,1 +1,0 @@
-var host = "https://snick-flask-sample.herokuapp.com";

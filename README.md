@@ -2,7 +2,7 @@
 # Flask Sample Application
 Flask app for educational purposes. Two implementations; Non-JS flask app and JS SPA with flask backend.
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/https://github.com/snickdx/flaskSample)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/snickdx/flaskSample)
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 ## Server Side Rendered - Full stack Flask Application (App1)
