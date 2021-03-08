@@ -59,6 +59,11 @@
             animation: octocat-wave 560ms ease-in-out
         }
 
+        dialog:not([open]) {
+            display: none;
+        }
+
+
         @keyframes octocat-wave {
 
             0%,
@@ -110,7 +115,7 @@
                 <div class="row">
                     <fieldset>
                         <legend>Enter new record here</legend>
-                        <form id="createForm">
+                        <form id="createForm" onsubmit="createRecord(event)">
                             <div class="form-group">
                                 <label for="nameText" class="bmd-label-floating">Name</label>
                                 <input type="text" name="name" class="form-control" id="nameText">
@@ -121,29 +126,23 @@
                                 <input type="text" name="country" maxlength="3" class="form-control" id="countryText">
                                 <span class="bmd-help">Max 3 Characters</span>
                             </div>
-                            <input type="button" value="submit" onclick="createRecord()"
-                                class="btn btn-primary btn-raised">
+                            <input type="submit" value="submit"  class="btn btn-primary btn-raised">
                         </form>
                     </fieldset>
                 </div>
 
-                <div class="row">
-                    <h1>Edit Record</h1>
-                </div>
-                <div class="row">
-                    <div>
+                <dialog id="mydialog" class="card" style="width: 18rem;">
+
+                    <div class="card-header">
+                        <h1>Edit Record</h1>
+                    </div>
+                   
+                    <div class="card-body">
                         <fieldset>
                             <legend>Updating a record:</legend>
 
-                            <form id="updateForm">
-
-                                <div class="form-group">
-                                    <label for="recSelect">Select Record</label>
-                                    <select name="id" class="form-control" id="recSelect">
-
-                                    </select>
-                                </div>
-
+                            <form id="updateForm" onsubmit="updateRecord(event)" method="dialog">
+                                <input type="hidden" name="id" id="updateId">
                                 <div class="form-group">
                                     <label for="nameText" class="bmd-label-floating">Name</label>
                                     <input type="text" name="name" class="form-control" value="" id="nameText">
@@ -151,16 +150,18 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="countryText" class="bmd-label-floating">Country</label>
-                                    <input type="text" name="country" maxlength="3" value="" class="form-control"
-                                        id="countryText">
+                                    <input type="text" name="country" maxlength="3" value="" class="form-control" id="countryText">
                                     <span class="bmd-help">Max 3 Characters</span>
                                 </div>
-                                <input type="button" value="Update" onclick="updateRecord()"
-                                    class="btn btn-primary btn-raised">
+                                <input type="submit" value="Update"  class="btn btn-primary btn-raised">
+                                <input type="button" value="Cancel" onclick="mydialog.close()"  class="btn btn-outline-primary btn-raised">
                             </form>
                         </fieldset>
                     </div>
-                </div>
+
+                </dialog>
+
+
 
             </div>
             <div class="col-sm-8">
@@ -185,107 +186,62 @@
 
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js"
-        integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U"
-        crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js"
-        integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9"
-        crossorigin="anonymous"></script>
-
-
-
     <script>
-        const host = "";
-        //The following functions Perfoms xml http requests
-        //Functions for posting data, putting data, getting data and deleting data
-        //The callback parameters are functions which handle the response of the request refer to callbackhell slack channel
+        const host = "";   
+        
+        async function sendRequest(method, url, data={}){
 
-        function ajaxPost(url, data, callback) {
-            let xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    callback(JSON.parse(this.responseText));//IMPORTANT json string must be convertd to js object
-                }
+            const options = {
+                GET: {body: undefined, headers: undefined },
+                POST: {body: JSON.stringify(data), headers:{ "Content-Type": "application/json"} },
+                PUT: {body: JSON.stringify(data), headers:{ "Content-Type": "application/json"} },
+                DELETE: {body: new URLSearchParams(data), headers: { } },
             };
-            xhr.open("POST", url);
-            xhr.setRequestHeader("Content-type", "application/json");
-            xhr.send(JSON.stringify(data));//IMPORTANT json data must be stringified
+
+            const {body, headers} = options[method];
+           
+            const response = await fetch(url, {method, body, headers });
+
+            return response.json();
         }
 
-        function ajaxPut(url, data, callback) {
-            let xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    callback(JSON.parse(this.responseText));//IMPORTANT json string must be convertd to js object
-                }
-            };
-            xhr.open("PUT", url);
-            xhr.setRequestHeader("Content-type", "application/json");
-            xhr.send(JSON.stringify(data));//IMPORTANT json data must be stringified
+        async function deleteRecord(id) {
+            await sendRequest('DELETE', `${host}/api/persons/${id}`);
+            loadRecords();
+            //delete and reload data
         }
 
-        function ajaxGet(url, callback) {
-            let xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    callback(JSON.parse(this.responseText));//any function passed will be called with the requestd data passed to it
-                }
-            };
-            xhr.open("GET", url);
-            xhr.send();
-        }
-
-        function ajaxDelete(url, callback) {
-            let xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    callback(JSON.parse(this.responseText));
-                }
-            };
-            xhr.open("DELETE", url);
-            xhr.send();
-        }
-
-        function deleteRecord(id) {
-            ajaxDelete(`${host}/api/persons/${id}`, loadRecords);//delete and reload data
-        }
-
-        function clearForm(id) {
-            let form = document.querySelector(`#${id}`);
-            for (let key in form.elements)
-                form.elements[key] = "";
-        }
 
         //pulls data from form and performs ajax put request sending data as json
-        function updateRecord() {
-
-            let form = document.querySelector("#updateForm");
+        async function updateRecord(event) {
+            event.preventDefault();
+            let form = event.target;
             let record = {
                 id: form.elements['id'].value,
                 name: form.elements['name'].value,
                 country: form.elements['country'].value
             };
-            clearForm("updateForm");
-            ajaxPut(`${host}/api/persons/${record.id}`, record, loadRecords);//send data and redo templating to reflect changes
+            form.reset();
+            mydialog.close();
+            await sendRequest('PUT', `${host}/api/persons/${record.id}`, record);
+            loadRecords();//send data and redo templating to reflect changes
         }
 
         //pulls data from form and performs ajax post request sending data as json
-        function createRecord() {
-            let form = document.querySelector("#createForm");
+        async function createRecord(event) {
+            event.preventDefault();
+            let form = event.target;
             let record = {
                 name: form.elements['name'].value,
                 country: form.elements['country'].value
             };
-            clearForm("createForm");
-            ajaxPost(`${host}/api/persons`, record, loadRecords);//send data and redo templating to reflect changes
+            form.reset();
+            await sendRequest('POST',`${host}/api/persons`, record);//send data and redo templating to reflect changes
+            loadRecords();
         }
 
         //function does all templating after data is retrieved form database
-        //introduced in lab4
-        function recordsHandler(records) {
+        function renderTable(records) {
             let tableHTML = "";
             let selectHTML = "";
 
@@ -297,25 +253,33 @@
                                     <td>${new Date(rec.date_created).toISOString()}</td>
                                     <td>
                                         <button class="btn btn-primary" onclick="deleteRecord(${rec.id})">Delete</button>
+                                        <button class="btn btn-primary" data-id="${rec.id}" onclick="openModal(event)">Edit</button>
                                     </td>
                                 </tr>`;
                 selectHTML += `<option>${rec.id}</option>`;
             }
             //JS templating
-            document.querySelector("#recSelect").innerHTML = selectHTML;
             document.querySelector("#list").innerHTML = tableHTML;
         }
 
-        function loadRecords() {
+        async function loadRecords() {
             console.log("loading records");
-            ajaxGet(`${host}/persons`, recordsHandler);
+            const records = await sendRequest('GET', `${host}/persons`);
+            renderTable(records);
+
+        }
+
+        function openModal(event){
+            const button = event.target;
+            const id = button.dataset.id;
+            document.querySelector('#updateid').value = id;
+            mydialog.showModal();
         }
 
 
         window.addEventListener('load', function () {
             console.log('All assets are loaded');
             loadRecords();//load our records
-
         })
 
     </script>

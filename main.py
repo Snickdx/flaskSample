@@ -57,14 +57,15 @@ class Person(db.Model):
 # that they can be reused in different routes
 
 def createPerson(new_person):
+    print(new_person)
     try:
         p = Person(new_person['name'], new_person["country"])#create person object using contructor
         db.session.add(p)
         db.session.commit()# save object
-    except error:
-        return {"message":"Error "+error, "code":500}
-    finally:
         return {"message":p.toDict(), "code":201}
+    except Exception as error:
+        return {"message":"Error ", "code":500}
+        
         
 def updatePerson(new_person, id):
     try:
@@ -72,20 +73,19 @@ def updatePerson(new_person, id):
         p.name = new_person['name']# over write object property
         p.country = new_person["country"]# save object
         db.session.commit()#save object
-    except error:
-        return {"message":"Error "+error, "code":500}
-    finally:
         return {"message":p.toDict(), "code":202}
-
+    except Exception as error:
+        return {"message":"Error ", "code":500}
+        
 def deletePerson(id):
     try:
         p = Person.query.get(id)
         db.session.delete(p)#delete object from database
         db.session.commit()#save changes
-    except error:
-        return {"message":"Database error"+error, "code":500}
-    finally:
         return {"message": "Record Deleted", "code": 204}
+    except Exception as error:
+        return {"message":"Error", "code":500}
+       
 
 # *********************************APP1 ROUTES**********************************
 # View Routes & Data Routes 
@@ -201,6 +201,7 @@ def api_create_person():
         data = request.form
     elif request.content_type == 'application/json':
         data = request.json
+
     return jsonify(createPerson(data))# call createPerson on data an jsonify its response
 
 @app.route('/api/persons/<id>', methods=['PUT'])
