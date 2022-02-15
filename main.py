@@ -218,6 +218,6 @@ def api_delete_person(id):
     return jsonify(deletePerson(id))
 
 
-# if __name__ == "__main__":
-#     print("Running From the Command line")
-#     app.run(host='0.0.0.0', debug=True, use_reloader=True)
+if __name__ == "__main__":
+    print("Running From the Command line")
+    app.run(host='0.0.0.0', debug=True, use_reloader=True)

@@ -53,8 +53,8 @@
         
         <nav class='navbar navbar-expand-md navbar-dark fixed-top bg-dark'>
             <a class="navbar-brand" href="#">Application 2</a>
-            <a href="/app1" role="button" class="btn btn-primary btn-raised active" aria-pressed="true">App1 MPA</a>
-            <a href="/app2" role="button" class="btn btn-primary btn-raised">App2 SPA</a>
+            <a href="/app1" role="button" class="btn btn-primary btn-raised active" aria-pressed="true">App1 SSR</a>
+            <a href="/app2" role="button" class="btn btn-primary btn-raised">App2 CSR</a>
             <a href="/" role="button" class="btn btn-primary btn-raised">Index</a>
         </nav>
 
@@ -71,7 +71,7 @@
                         <div class="row">
                             <fieldset>
                                 <legend>Enter new record here</legend>
-                                <form method="POST" action="{/persons">
+                                <form method="POST" action="/persons">
                                   <div class="form-group">
                                     <label for="nameText" class="bmd-label-floating">Name</label>
                                     <input type="text" name="name" class="form-control" id="nameText">
