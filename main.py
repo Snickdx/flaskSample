@@ -1,5 +1,7 @@
 from flask import Flask, request, render_template, send_from_directory, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+import click
+from flask.cli import with_appcontext
 from flask_cors import CORS
 import json
 import os
@@ -46,6 +48,35 @@ class Person(db.Model):
 # Ensure tables are created on startup
 with app.app_context():
     db.create_all()
+
+# ******************************* CLI Commands *********************************
+@app.cli.command("init")
+@with_appcontext
+def init_command():
+    """Delete the current database file and recreate it with sample data."""
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    db_path = os.path.join(basedir, 'lab6.db')
+
+    # Remove existing database file if it exists
+    if os.path.exists(db_path):
+        os.remove(db_path)
+        click.echo(f"Removed existing database: {db_path}")
+    else:
+        click.echo("No existing database found; creating a new one.")
+
+    # Recreate tables
+    db.create_all()
+    click.echo("Created tables.")
+
+    # Seed sample data
+    samples = [
+        Person(name="Alice", country="USA"),
+        Person(name="Bob", country="CAN"),
+        Person(name="Carlos", country="MEX"),
+    ]
+    db.session.add_all(samples)
+    db.session.commit()
+    click.echo("Inserted sample data: Alice, Bob, Carlos.")
 
 #********************************Data Functions ********************************
 # These functions perform operations on the database and are used by the routes

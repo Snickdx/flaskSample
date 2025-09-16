@@ -2,8 +2,6 @@
 # Flask Sample Application
 Flask app for educational purposes. Two implementations; Non-JS flask app and JS SPA with flask backend.
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/snickdx/flaskSample)
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 ## Server Side Rendered - Full stack Flask Application (App1)
 ![app1 image](https://raw.githubusercontent.com/Snickdx/flaskSample/master/templates/app1.png "App1 Architecture")
@@ -15,5 +13,59 @@ Flask app for educational purposes. Two implementations; Non-JS flask app and JS
 ## Demo
 
 [DemoLink](https://snick-flask-sample.herokuapp.com/)
+
+
+
+## Getting Started
+
+### Prerequisites
+- Python 3.12+
+- pip
+
+### Install dependencies
+```bash
+pip3 install -r requirements.txt
+```
+
+### Environment configuration
+This project uses Flask CLI with python-dotenv to load a single `.flaskenv` file for local development.
+- `.flaskenv` contains defaults (already included):
+	- `FLASK_APP=main.py`
+	- `FLASK_DEBUG=1`
+	- `FLASK_RUN_HOST=0.0.0.0`
+	- `FLASK_RUN_PORT=5000`
+If you need to change the database path, you can set `SQLALCHEMY_DATABASE_URI` directly in `.flaskenv` as well.
+
+### Initialize the database with sample data
+This will remove the current SQLite file and recreate it with seeded records.
+```bash
+flask init
+```
+
+### Run the development server
+Use Flask CLI (loads `.flaskenv` automatically):
+```bash
+flask run
+```
+Optional overrides per-run:
+```bash
+FLASK_RUN_HOST=127.0.0.1 FLASK_RUN_PORT=5001 flask run
+```
+
+## Production / Deployment
+
+This repo includes a `Procfile` compatible with platforms like Heroku. It uses gunicorn to run the app.
+
+### Run with gunicorn locally
+```bash
+gunicorn main:app --log-file -
+```
+
+### Notes
+- The SQLite database file is `lab6.db` in the project root.
+- The Flask app auto-creates tables on startup; use `flask init` anytime you want a clean database with sample data.
+- Two app variants are available:
+	- Server-side rendered routes (App1): `/app1`, `/` index page
+	- Client-side (App2) using REST API: `/app2` with API under `/api/*`
 
 
