@@ -10,14 +10,11 @@ from sqlalchemy.sql import func
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///lab6.db'
-app.config['SEVER_NAME'] = os.environ.get("SERVER_NAME", default="127.0.0.1")
 db = SQLAlchemy(app)
 
-# use localhost for your local machine
-# host = "localhost" 
-host = app.config['SEVER_NAME']
+# Deprecated SERVER_NAME/host config removed; templates don't require host injection
 
 # enable CORS on all the routes that start with /api
 CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -46,7 +43,9 @@ class Person(db.Model):
             'country': self.country
         }
 
-#db.create_all()
+# Ensure tables are created on startup
+with app.app_context():
+    db.create_all()
 
 #********************************Data Functions ********************************
 # These functions perform operations on the database and are used by the routes
@@ -116,7 +115,7 @@ def app1():
     records = Person.query.all()
     records = list(map(lambda object: object.toDict(), records))
     response = jsonify(records)
-    return render_template("app1.html", person=None, records=records, host=host)
+    return render_template("app1.html", person=None, records=records)
 
 # full js version of app no templating done on server
 @app.route('/app2')
@@ -134,7 +133,7 @@ def update(id):
     records = Person.query.all()
     records = list(map(lambda object: object.toDict(), records))
     response = jsonify(records)
-    return render_template("app1.html", person=p, host=host, records=records)
+    return render_template("app1.html", person=p, records=records)
 
 @app.route('/persons', methods=['GET'])
 def show_all_persons():
@@ -156,7 +155,7 @@ def save_person():
              return app1()# redirect to home
         else:
             return render_template('error.html', result=result)
-    render_template('error.html', result={"message":"Invliad data format", "code":500})
+    return render_template('error.html', result={"message":"Invalid data format", "code":500})
 
 @app.route('/persons/update', methods=['POST'])
 def udpate_person():
