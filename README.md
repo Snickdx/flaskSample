@@ -52,13 +52,11 @@ Optional overrides per-run:
 FLASK_RUN_HOST=127.0.0.1 FLASK_RUN_PORT=5001 flask run
 ```
 
-## Production / Deployment
-
-This repo includes a `Procfile` compatible with platforms like Heroku. It uses gunicorn to run the app.
+## Production
 
 ### Run with gunicorn locally
 ```bash
-gunicorn main:app --log-file -
+gunicorn main:app
 ```
 
 ### Notes
